@@ -6,6 +6,8 @@ import logging
 import os
 
 import alerts
+import alerts_extend_db
+import alerts_extend_ea_webchat
 import enhancements
 import jsonschema
 import ruletypes
@@ -48,6 +50,8 @@ rules_mapping = {
 # Used to map names of alerts to their classes
 alerts_mapping = {
     'email': alerts.EmailAlerter,
+    'db': alerts_extend_db.DBAlerter,
+    'webchat': alerts_extend_ea_webchat.WeChatAlerter,
     'jira': alerts.JiraAlerter,
     'opsgenie': OpsGenieAlerter,
     'stomp': alerts.StompAlerter,

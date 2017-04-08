@@ -49,7 +49,7 @@ realert:
 filter:
 - query:
     query_string:
-      query: "field6:Exception"
+      query: "_id: AVsaCdnJPXD-TFiMc7PV"
 
 
 
@@ -57,7 +57,6 @@ filter:
 # (Required)
 # The alert is use when a match is found
 alert:
-- "db"
 - "email"
 
 # (required, email specific)
@@ -77,13 +76,3 @@ smtp_port: 25
 smtp_auth_file: /Users/yangwm/log/elastalert/smtp_auth_file.yaml
 #回复给那个邮箱
 email_reply_to: yangwm@linsdom.com
-
-db_ip: localhost
-db_database: springbootmybatis
-db_username: root
-db_password: '000000'
-
-
-
-
-#command: ["/Users/yangwm/eclipse/sts-bundle/workspace-sts-3.8.3.RELEASE/alert-transfer/src/main/resources/alert.sh","--msg","%(field1)s"]

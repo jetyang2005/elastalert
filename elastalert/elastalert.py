@@ -451,6 +451,7 @@ class ElastAlerter():
         map(rule['processed_hits'].pop, remove)
 
     def run_query(self, rule, start=None, end=None, scroll=False):
+        elastalert_logger.info("Starting up method:---run_query---")
         """ Query for the rule and pass all of the results to the RuleType instance.
 
         :param rule: The rule configuration.
@@ -587,6 +588,7 @@ class ElastAlerter():
                     rule['bucket_offset_delta'] = offset
 
     def get_segment_size(self, rule):
+        elastalert_logger.info("Starting up method:---get_segment_size---")
         """ The segment size is either buffer_size for queries which can overlap or run_every for queries
         which must be strictly separate. This mimicks the query size for when ElastAlert is running continuously. """
         if not rule.get('use_count_query') and not rule.get('use_terms_query') and not rule.get('aggregation_query_element'):
@@ -633,6 +635,7 @@ class ElastAlerter():
         :param endtime: The latest timestamp to query.
         :return: The number of matches that the rule produced.
         """
+        elastalert_logger.info("Starting up method:---run_rule---")
         run_start = time.time()
 
         self.current_es = elasticsearch_client(rule)
@@ -862,7 +865,7 @@ class ElastAlerter():
                     self.handle_error("%s is not a valid ISO8601 timestamp (YYYY-MM-DDTHH:MM:SS+XX:00)" % (self.starttime))
                     exit(1)
         self.running = True
-        elastalert_logger.info("Starting up")
+        elastalert_logger.info("Starting up method:---start---")
         while self.running:
             next_run = datetime.datetime.utcnow() + self.run_every
 
@@ -885,7 +888,7 @@ class ElastAlerter():
     def run_all_rules(self):
         """ Run each rule one time """
         self.send_pending_alerts()
-
+        elastalert_logger.info("Starting up method:---run_all_rules---")
         next_run = datetime.datetime.utcnow() + self.run_every
 
         for rule in self.rules:
@@ -905,6 +908,7 @@ class ElastAlerter():
             except Exception as e:
                 self.handle_uncaught_exception(e, rule)
             else:
+                elastalert_logger.info("Starting up method:---run_all_rules2---")
                 old_starttime = pretty_ts(rule.get('original_starttime'), rule.get('use_local_time'))
                 elastalert_logger.info("Ran %s from %s to %s: %s query hits, %s matches,"
                                        " %s alerts sent" % (rule['name'], old_starttime, pretty_ts(endtime, rule.get('use_local_time')),
@@ -1053,6 +1057,7 @@ class ElastAlerter():
         return filters
 
     def alert(self, matches, rule, alert_time=None):
+        elastalert_logger.info("Starting up method:---alert---")
         """ Wraps alerting, Kibana linking and enhancements in an exception handler """
         try:
             return self.send_alert(matches, rule, alert_time=alert_time)
@@ -1060,6 +1065,7 @@ class ElastAlerter():
             self.handle_uncaught_exception(e, rule)
 
     def send_alert(self, matches, rule, alert_time=None):
+        elastalert_logger.info("Starting up method:---send_alert---")
         """ Send out an alert.
 
         :param matches: A list of matches.
@@ -1132,7 +1138,9 @@ class ElastAlerter():
         for alert in rule['alert']:
             alert.pipeline = alert_pipeline
             try:
+                #elastalert_logger.info("Starting up method:---before alert---")
                 alert.alert(matches)
+                #elastalert_logger.info("Starting up method:---after alert---")
             except EAException as e:
                 self.handle_error('Error while running alert %s: %s' % (alert.get_info()['type'], e), {'rule': rule['name']})
                 alert_exception = str(e)
@@ -1152,6 +1160,7 @@ class ElastAlerter():
                 agg_id = res['_id']
 
     def get_alert_body(self, match, rule, alert_sent, alert_time, alert_exception=None):
+        elastalert_logger.info("Starting up method:---get_alert_body---")
         body = {'match_body': match}
         body['rule_name'] = rule['name']
         # TODO record info about multiple alerts
@@ -1166,6 +1175,7 @@ class ElastAlerter():
 
     def writeback(self, doc_type, body):
         # ES 2.0 - 2.3 does not support dots in field names.
+        elastalert_logger.info("Starting up method:---writeback---")
         if self.replace_dots_in_field_names:
             writeback_body = replace_dots_in_field_names(body)
         else:
@@ -1191,6 +1201,7 @@ class ElastAlerter():
             logging.exception("Error writing alert info to Elasticsearch: %s" % (e))
 
     def find_recent_pending_alerts(self, time_limit):
+        elastalert_logger.info("Starting up method:---find_recent_pending_alerts---")
         """ Queries writeback_es to find alerts that did not send
         and are newer than time_limit """
 
@@ -1219,6 +1230,7 @@ class ElastAlerter():
         return []
 
     def send_pending_alerts(self):
+        elastalert_logger.info("Starting up method:---send_pending_alerts---")
         pending_alerts = self.find_recent_pending_alerts(self.alert_time_limit)
         for alert in pending_alerts:
             _id = alert['_id']
@@ -1276,6 +1288,7 @@ class ElastAlerter():
                         rule['agg_matches'] = [agg_match for agg_match in rule['agg_matches'] if self.get_aggregation_key_value(rule, agg_match) != aggregation_key_value]
 
     def get_aggregated_matches(self, _id):
+        elastalert_logger.info("Starting up method:---get_aggregated_matches---")
         """ Removes and returns all matches from writeback_es that have aggregate_id == _id """
 
         # XXX if there are more than self.max_aggregation matches, you have big alerts and we will leave entries in ES.
@@ -1296,6 +1309,7 @@ class ElastAlerter():
         return matches
 
     def find_pending_aggregate_alert(self, rule, aggregation_key_value=None):
+        elastalert_logger.info("Starting up method:---find_pending_aggregate_alert---")
         query = {'filter': {'bool': {'must': [{'term': {'rule_name': rule['name']}},
                                               {'range': {'alert_time': {'gt': ts_now()}}},
                                               {'term': {'alert_sent': 'false'}}],
@@ -1320,7 +1334,7 @@ class ElastAlerter():
 
     def add_aggregated_alert(self, match, rule):
         """ Save a match as a pending aggregate alert to Elasticsearch. """
-
+        elastalert_logger.info("Starting up method:---add_aggregated_alert---")
         # Optionally include the 'aggregation_key' as a dimension for aggregations
         aggregation_key_value = self.get_aggregation_key_value(rule, match)
 

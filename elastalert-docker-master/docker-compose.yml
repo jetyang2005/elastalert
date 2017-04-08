@@ -3,7 +3,7 @@ services:
     tox:
         build:
             context: ./
-            dockerfile: Dockerfile-test
+            dockerfile: Dockerfile1-test
         command: tox
         container_name: elastalert_tox
         working_dir: /home/elastalert

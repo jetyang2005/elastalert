@@ -1,0 +1,39 @@
+# Elastalert Docker image running on ubuntu
+# Based off of ivankrizsan/elastalert:latest .
+FROM ubuntu:latest
+
+MAINTAINER Tom Ganem
+ENV SET_CONTAINER_TIMEZONE false
+ENV ELASTALERT_VERSION 0.1.8
+ENV CONTAINER_TIMEZONE Asia/Shanghai
+ENV ELASTALERT_URL /Users/yangwm/log/elastalert
+ENV ELASTALERT_DIRECTORY_NAME elastalert
+ENV ELASTALERT_HOME /opt/${ELASTALERT_DIRECTORY_NAME}
+ENV RULES_DIRECTORY /opt/${ELASTALERT_DIRECTORY_NAME}/example_rules
+
+
+WORKDIR /opt
+
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install tar curl python-dev tzdata -y
+RUN apt-get install gcc make libpq-dev libxml2-dev libxslt1-dev libldap2-dev libsasl2-dev libffi-dev -y
+
+RUN curl -Lo get-pip.py https://bootstrap.pypa.io/get-pip.py
+RUN    python get-pip.py
+RUN    rm get-pip.py
+
+RUN mkdir -p ${ELASTALERT_HOME}
+
+COPY ${ELASTALERT_URL} ${ELASTALERT_HOME}/
+
+WORKDIR ${ELASTALERT_HOME}
+
+RUN mkdir -p ${RULES_DIRECTORY}
+RUN sed -i -e "s|'elasticsearch'|'${ELASTALERT_VERSION_CONSTRAINT}'|g" setup.py
+RUN python setup.py install
+
+RUN pip install "elasticsearch>=5.0.0"
+
+COPY ./docker-entrypoint.sh ${ELASTALERT_HOME}/docker-entrypoint.sh
+ENTRYPOINT ["/opt/elastalert/docker-entrypoint.sh"]
+CMD ["python", "elastalert/elastalert.py", "--verbose"]

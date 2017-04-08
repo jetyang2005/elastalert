@@ -157,6 +157,7 @@ class Alerter(object):
     required_options = frozenset([])
 
     def __init__(self, rule):
+        elastalert_logger.info("Starting up method:---alerts.__init__---")
         self.rule = rule
         # pipeline object is created by ElastAlerter.send_alert()
         # and attached to each alerters used by a rule before calling alert()
@@ -483,6 +484,7 @@ class JiraAlerter(Alerter):
     ]
 
     def __init__(self, rule):
+
         super(JiraAlerter, self).__init__(rule)
         self.server = self.rule['jira_server']
         self.get_account(self.rule['jira_account_file'])
@@ -673,6 +675,7 @@ class JiraAlerter(Alerter):
         self.client.add_comment(ticket, comment)
 
     def alert(self, matches):
+        elastalert_logger.info("Starting up method:---alerts.start---")
         title = self.create_title(matches)
 
         if self.bump_tickets:
@@ -771,6 +774,9 @@ class CommandAlerter(Alerter):
             self.new_style_string_format = True
 
     def alert(self, matches):
+
+        elastalert_logger.info("Starting up method:---alerts.command.alert---")
+
         # Format the command and arguments
         try:
             if self.new_style_string_format:
