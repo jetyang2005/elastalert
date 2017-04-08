@@ -6,7 +6,7 @@ FROM ubuntu:15.04
 MAINTAINER Ivan Krizsan, https://github.com/krizsan
 
 
-
+#header
 
 # URL from which to download Elastalert.
 ENV ELASTALERT_URL https://github.com/Yelp/elastalert/archive/v0.1.8.zip
