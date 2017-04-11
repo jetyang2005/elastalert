@@ -13,6 +13,7 @@ import jsonschema
 import ruletypes
 import yaml
 import yaml.scanner
+import db_method
 from opsgenie import OpsGenieAlerter
 from staticconf.loader import yaml_loader
 from util import dt_to_ts
@@ -24,6 +25,8 @@ from util import ts_to_dt
 from util import ts_to_dt_with_format
 from util import unix_to_dt
 from util import unixms_to_dt
+from db_sqlconn import Mysql
+
 
 # schema for rule yaml
 rule_schema = jsonschema.Draft4Validator(yaml.load(open(os.path.join(os.path.dirname(__file__), 'schema.yaml'))))
@@ -415,20 +418,25 @@ def load_rules(args):
     base_config = copy.deepcopy(conf)
 
     # Load each rule configuration file
-    rules = []
-    rule_files = get_file_paths(conf, use_rule)
-    for rule_file in rule_files:
-        try:
-            rule = load_configuration(rule_file, conf, args)
-            if rule['name'] in names:
-                raise EAException('Duplicate rule named %s' % (rule['name']))
-        except EAException as e:
-            raise EAException('Error loading file %s: %s' % (rule_file, e))
 
-        rules.append(rule)
-        names.append(rule['name'])
+    rules = []
+
+    rules = db_method.get_rules_from_db(conf,args)
+    # rule_files = get_file_paths(conf, use_rule)
+    # for rule_file in rule_files:
+    #     try:
+    #         rule = load_configuration(rule_file, conf, args)
+    #         if rule['name'] in names:
+    #             raise EAException('Duplicate rule named %s' % (rule['name']))
+    #     except EAException as e:
+    #         raise EAException('Error loading file %s: %s' % (rule_file, e))
+    #
+    #     rules.append(rule)
+    #     names.append(rule['name'])
 
     conf['rules'] = rules
+
+
     return conf
 
 
@@ -439,3 +447,4 @@ def get_rule_hashes(conf, use_rule=None):
         with open(rule_file) as fh:
             rule_mod_times[rule_file] = hashlib.sha1(fh.read()).digest()
     return rule_mod_times
+

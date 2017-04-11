@@ -11,8 +11,7 @@ Created on 2016年5月7日
 import MySQLdb
 from MySQLdb.cursors import DictCursor
 from DBUtils.PooledDB import PooledDB
-# from PooledDB import PooledDB
-import DBConfig
+
 
 """ 
 Config是一些数据库的配置文件 
@@ -27,21 +26,25 @@ class Mysql(object):
     # 连接池对象
     __pool = None
 
-    def __init__(self):
+
+    def __init__(self,conf):
         # 数据库构造函数，从连接池中取出连接，并生成操作游标
-        self._conn = Mysql.__getConn()
+        self._conn = Mysql.__getConn(conf)
         self._cursor = self._conn.cursor()
 
     @staticmethod
-    def __getConn():
+    def __getConn(config_db):
+
         """ 
         @summary: 静态方法，从连接池中取出连接 
         @return MySQLdb.connection 
         """
         if Mysql.__pool is None:
             __pool = PooledDB(creator=MySQLdb, mincached=1, maxcached=20,
-                              host=DBConfig.DBHOST, port=DBConfig.DBPORT, user=DBConfig.DBUSER,                                                 passwd=DBConfig.DBPWD,db=DBConfig.DBNAME, use_unicode=False,
-                              charset=DBConfig.DBCHAR, cursorclass=DictCursor)
+                              host=config_db['DBHOST'], port=config_db['DBPORT'],
+                              user=config_db['DBUSER'], passwd=config_db['DBPWD'],
+                              db=config_db['DBNAME'], use_unicode=False,
+                              charset=config_db['DBCHAR'], cursorclass=DictCursor)
         return __pool.connection()
 
     def getAll(self, sql, param=None):
