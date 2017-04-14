@@ -48,21 +48,28 @@ class DBAlerter(Alerter):
         now = datetime.datetime.now()
         now = now.strftime("%Y-%m-%d %H:%M:%S")
         insert_sql = 'insert into link_alert(' \
+                   'alert_ruleid, '\
+                   'alert_rule, '\
                    'alert_userid,' \
                    'alert_username,' \
                    'alert_channel,' \
                    'alert_account,' \
-                   'alert_rule,' \
                    'alert_message,' \
                    'alert_time,' \
-                   'alert_status,' \
-                   'alert_exception' \
+                   'alert_status' \
                    ')  values ' \
-                   '(1,"admin","2","admin@linsdom.com","frequency",%s,%s,"0","")'
+                   '(%s,%s,%s,%s,"2",%s,%s,%s,"0")'
 
-        insert_data = [content, now]
+        for alertperson in self.rule['alertpersons']:
 
-        mysql.insertOne(insert_sql, insert_data)
+            insert_data = [self.rule['rule_id'],
+                           self.rule['name'],
+                           alertperson['user_id'],
+                           alertperson['user_name'],
+                           alertperson['user_email'],
+                           content,
+                           now]
+            mysql.insertOne(insert_sql, insert_data)
 
         mysql.dispose()
 
