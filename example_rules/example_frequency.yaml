@@ -78,10 +78,6 @@ smtp_auth_file: /Users/yangwm/log/elastalert/smtp_auth_file.yaml
 #回复给那个邮箱
 email_reply_to: yangwm@linsdom.com
 
-db_ip: localhost
-db_database: springbootmybatis
-db_username: root
-db_password: '000000'
 
 
 
