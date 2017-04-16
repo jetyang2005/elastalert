@@ -359,8 +359,8 @@ class EmailAlerter(Alerter):
         self.smtp_ssl = self.rule.get('smtp_ssl', False)
         self.from_addr = self.rule.get('from_addr', 'ElastAlert')
         self.smtp_port = self.rule.get('smtp_port')
-        if self.rule.get('smtp_auth_file'):
-            self.get_account(self.rule['smtp_auth_file'])
+        self.user = self.rule.get('user')
+        self.password = self.rule.get('password')
         # Convert email to a list if it isn't already
         if isinstance(self.rule['email'], basestring):
             self.rule['email'] = [self.rule['email']]
@@ -377,6 +377,7 @@ class EmailAlerter(Alerter):
             self.rule['email_add_domain'] = '@' + add_suffix
 
     def alert(self, matches):
+
         body = self.create_alert_body(matches)
 
         # Add JIRA ticket if it exists
@@ -418,8 +419,8 @@ class EmailAlerter(Alerter):
                 self.smtp.ehlo()
                 if self.smtp.has_extn('STARTTLS'):
                     self.smtp.starttls()
-            if 'smtp_auth_file' in self.rule:
-                self.smtp.login(self.user, self.password)
+            #邮箱认证
+            self.smtp.login(self.user, self.password)
         except (SMTPException, error) as e:
             raise EAException("Error connecting to SMTP host: %s" % (e))
         except SMTPAuthenticationError as e:

@@ -6,24 +6,28 @@
 from db_sqlconn import Mysql
 import config
 import yaml
-
+import json
 
 def get_rules_from_db(conf, args):
 
     # 申请资源
     mysql = Mysql(conf)
     rules = []
-    sql_rules = "select * from link_rules;"
+    sql_rules = "select * from link_rules"
     result = mysql.getAll(sql_rules)
     if result:
         for row in result:
 
-            query_dictvalue_sql = "select dict_name as rule_type from link_dict_entry " \
-                                "where dict_type_code = 'alertRuletypes' and dict_code = %s"
+            # query_ruletypesdictvalue_sql = "select dict_name as rule_type from link_dict_entry " \
+            #                     "where dict_type_code = 'alertRuletypes' and dict_code = %s"
+            # query_ruletypesdictvalue_param = [row["rule_type"]]
+            # rule_type = mysql.getOne(query_ruletypesdictvalue_sql, query_ruletypesdictvalue_param)
 
-            query_dictvalue_param = [row["rule_type"]]
+            # query_alertdictvalue_sql = "select dict_name as rule_type from link_dict_entry " \
+            #                     "where dict_type_code = 'alertRuletypes' and dict_code = %s"
+            # query_dictvalue_param = [row["rule_type"]]
+            # rule_type = mysql.getOne(query_alertdictvalue_sql, query_dictvalue_param)
 
-            rule_type = mysql.getOne(query_dictvalue_sql, query_dictvalue_param)
 
             query_alertperson_sql = "select * from ( " \
                                     " select  u.id as user_id,u.user_name as user_name ,u.email as user_email " \
@@ -35,12 +39,10 @@ def get_rules_from_db(conf, args):
                                     "from LINK_RULE_RECEIVER a  join link_user c on a.RULE_RECEIVER_ID=c.id   " \
                                     "where a.RULE_RECEIVER_TYPE=1 and a.rule_id = %s " \
                                     ") alertpersons "
-
             query_alertperson_param = [row['id'], row['id']]
-
             alertpersons = mysql.getAll(query_alertperson_sql, query_alertperson_param)
 
-            if rule_type['rule_type'] == 'frequency':
+            if row['rule_type'] == 'frequency':
                 rule = frequency_rule(conf, row)
 
             config.load_options(rule, conf, '', args)
@@ -69,14 +71,18 @@ def frequency_rule(conf, row):
             'alert': ['db'],
             'filter': [{'query': {'query_string': {'query': 'field6:Exception'}}}],
             'email_reply_to': '',
-            'rule_file': 'rule from db table',
+            'rule_file': '/Users/yangwm/log/elastalert/example_rules/example_frequency.yaml',
             'timeframe': {'minutes': 1},
             'type': 'frequency',
             'email': ['286388651@qq.com']}
 
-    rule_filter = yaml.load(row["rule_filter"])
-    rule_extend = yaml.load(row["rule_extend"])
-
+    rule_filter_str = row["rule_filter"].replace("\n", "").strip()
+    rule_extend_str = row["rule_extend"].replace("\n", "").strip()
+    rule_filter = json.loads(rule_filter_str)
+    rule_extend = json.loads(rule_extend_str)
+    alert_way = row['rule_alerts']
+    rule['alert'] = alert_way.split(',')
+    rule['alert_way'] = row['rule_alerts']
     rule['name'] = row["rule_name"]
     rule['index'] = row["rule_index"]
     rule['realert'] = rule_extend['realert']

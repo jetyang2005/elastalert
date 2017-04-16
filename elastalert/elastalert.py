@@ -169,6 +169,7 @@ class ElastAlerter():
         :param sort: If true, sort results by timestamp. (Default True)
         :return: A query dictionary to pass to Elasticsearch.
         """
+        elastalert_logger.info("Starting up method:---get_query---")
         starttime = to_ts_func(starttime)
         endtime = to_ts_func(endtime)
         filters = copy.copy(filters)
@@ -292,6 +293,7 @@ class ElastAlerter():
         :param endtime: The latest time to query.
         :return: A list of hits, bounded by rule['max_query_size'].
         """
+        elastalert_logger.info("Starting up method:---get_hits---")
         query = self.get_query(rule['filter'], starttime, endtime, timestamp_field=rule['timestamp_field'], to_ts_func=rule['dt_to_ts'], five=self.is_five())
         extra_args = {'_source_include': rule['include']}
         scroll_keepalive = rule.get('scroll_keepalive', self.scroll_keepalive)

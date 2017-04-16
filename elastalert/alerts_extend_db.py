@@ -58,7 +58,7 @@ class DBAlerter(Alerter):
                    'alert_time,' \
                    'alert_status' \
                    ')  values ' \
-                   '(%s,%s,%s,%s,"2",%s,%s,%s,"0")'
+                   '(%s,%s,%s,%s,%s,%s,%s,%s,"0")'
 
         for alertperson in self.rule['alertpersons']:
 
@@ -66,6 +66,7 @@ class DBAlerter(Alerter):
                            self.rule['name'],
                            alertperson['user_id'],
                            alertperson['user_name'],
+                           self.rule['alert_way'],
                            alertperson['user_email'],
                            content,
                            now]
