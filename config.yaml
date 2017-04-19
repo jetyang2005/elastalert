@@ -1,0 +1,82 @@
+# This is the folder that contains the rule yaml files
+# Any .yaml file will be loaded as a rule
+rules_folder: example_rules
+
+# How often ElastAlert will query Elasticsearch
+# The unit can be anything from weeks to seconds
+run_every:
+  minutes: 1
+
+# ElastAlert will buffer results from the most recent
+# period of time, in case some log sources are not in real time
+buffer_time:
+  minutes: 1
+
+# The Elasticsearch hostname for metadata writeback
+# Note that every rule can have its own Elasticsearch host
+es_host: localhost
+
+# The Elasticsearch port
+es_port: 9200
+
+# Optional URL prefix for Elasticsearch
+#es_url_prefix: elasticsearch
+
+# Connect with TLS to Elasticsearch
+#use_ssl: True
+
+# Verify TLS certificates
+#verify_certs: True
+
+# GET request with body is the default option for Elasticsearch.
+# If it fails for some reason, you can pass 'GET', 'POST' or 'source'.
+# See http://elasticsearch-py.readthedocs.io/en/master/connection.html?highlight=send_get_body_as#transport
+# for details
+#es_send_get_body_as: GET
+
+# Option basic-auth username and password for Elasticsearch
+#es_username: someusername
+#es_password: somepassword
+
+# The index on es_host which is used for metadata storage
+# This can be a unmapped index, but it is recommended that you run
+# elastalert-create-index to set a mapping
+writeback_index: elastalert_status
+
+# If an alert fails for some reason, ElastAlert will retry
+# sending the alert until this time period has elapsed
+alert_time_limit:
+  days: 1
+
+################## Email Config ######################
+email:
+- "yangwm@linsdom.com"
+#从哪个邮箱发送
+from_addr: test@linsdom.com
+#SMTP协议的邮件服务器相关配置
+#smtp.163.com是网易163邮箱的smtp服务器
+#登陆163邮箱后，找到 【设置】>【POP3/SMTP/IMAP】>开启，然后设置【客户端授权密码】
+smtp_host: smtp.exmail.qq.com
+smtp_port: 25
+
+#回复给哪个邮箱
+email_reply_to: yangwm@linsdom.com
+
+#发送邮件的邮箱
+user: test@linsdom.com
+#不是邮箱密码，是设置的POP3密码
+password: Aa000000
+
+################## DB Config ######################
+
+DBHOST: localhost
+DBPORT: 3306
+DBUSER: root
+DBPWD: '000000'
+DBNAME:  springbootmybatis
+DBCHAR: utf8
+
+################## SMS Config ######################
+
+
+################## Webchat Config ######################
