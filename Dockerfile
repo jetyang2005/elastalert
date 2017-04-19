@@ -9,7 +9,7 @@ MAINTAINER jetyang, https://github.com/jetyang
 #header
 
 # URL from which to download Elastalert.
-ENV ELASTALERT_URL https://github.com/jetyang2005/elastalert/archive/0.2.0.zip
+ENV ELASTALERT_URL https://github.com/jetyang2005/elastalert/archive/0.2.2.zip
 # Directory to which Elastalert and Supervisor logs are written.
 ENV LOG_DIR /opt/logs
 # Elastalert home directory name.
@@ -44,7 +44,7 @@ WORKDIR ${ELASTALERT_HOME}
 
 # Install Elastalert.
 RUN python setup.py install && \
-#    python ${ELASTALERT_HOME}/DBUtils-1.2/setup.py install && \
+#    python DBUtils-1.2/setup.py install && \
     pip install -e . && \
     pip install MySQL-python && \
 
