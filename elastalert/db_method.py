@@ -43,6 +43,7 @@ def get_rules_from_db(conf, args):
             alertpersons = mysql.getAll(query_alertperson_sql, query_alertperson_param)
 
             if row['rule_type'] == 'frequency':
+
                 rule = frequency_rule(conf, row)
 
             config.load_options(rule, conf, '', args)
