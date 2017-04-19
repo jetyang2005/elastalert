@@ -9,7 +9,11 @@ from elasticsearch import RequestsHttpConnection
 from elasticsearch.client import Elasticsearch
 from six import string_types
 
-logging.basicConfig()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                    datefmt='%a, %d %b %Y %H:%M:%S',
+                    filename='logs/elastalert.log',
+                    filemode='w')
 elastalert_logger = logging.getLogger('elastalert')
 
 
