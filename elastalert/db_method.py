@@ -77,9 +77,9 @@ def frequency_rule(conf, row):
             'type': 'frequency',
             'email': ['286388651@qq.com']}
 
-    rule_filter_str = row["rule_filter"].replace("\n", "").strip()
+    #rule_filter_str = row["rule_filter"].replace("\n", "").strip()
     rule_extend_str = row["rule_extend"].replace("\n", "").strip()
-    rule_filter = json.loads(rule_filter_str)
+    #rule_filter = json.loads(rule_filter_str)
     rule_extend = json.loads(rule_extend_str)
     alert_way = row['rule_alerts']
     rule['alert'] = alert_way.split(',')
@@ -90,7 +90,7 @@ def frequency_rule(conf, row):
     rule['num_events'] = rule_extend['num_events']
     rule['timeframe'] = rule_extend['timeframe']
     rule['type'] = 'frequency'
-    rule['filter'] = rule_filter['filter']
+    rule['filter'] = rule_extend['filter']
 
     print "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
         row["id"], row["rule_name"], row["rule_type"], row["rule_index"], row["rule_desc"], row["rule_alerts"],
