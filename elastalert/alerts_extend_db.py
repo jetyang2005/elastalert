@@ -15,7 +15,9 @@ from db_sqlconn import Mysql
 # 推送消息到数据库中，便于后继查询                                              #
 #################################################################
 '''
-
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 class DBAlerter(Alerter):
 
