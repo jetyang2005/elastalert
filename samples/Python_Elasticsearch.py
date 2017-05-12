@@ -110,6 +110,10 @@ class ElasticsearchOperate():
 
             self.es.indices.create(index="index-student",  ignore=400, body=test_index_mapping)
 
+    def create_data(self, esdatas):
+        self.elastalert_logger.info(str(esdatas).decode("unicode_escape").encode("utf8"))
+        helpers.bulk(self.es, esdatas)
+
     def init_data(self):
 
         data = xlrd.open_workbook('/Users/yangwm/log/elasticsearch_data.xls')  # 打开xls文件

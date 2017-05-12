@@ -5,7 +5,7 @@ import MySQLdb as mdb
 con = None
 try:
     # 连接 mysql 的方法： connect('ip','user','password','dbname')
-    con = mdb.connect('localhost', 'root', '000000', 'springbootmybatis');
+    con = mdb.connect('localhost', 'root', '000000', 'springbootmybatis')
 
     # 所有的查询，都在连接 con 的一个模块 cursor 上面运行的
     cur = con.cursor()
